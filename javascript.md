@@ -121,6 +121,18 @@ console.log(`abc
 /*
 여러줄 주석입니다.
 */
+
+/**
+ *  a와 b를 더함
+ *
+ *  @author: lee
+ *  @param {number} a 더할 숫자
+ *  @param {number} b 더할 숫자
+ *  @return {number} a + b를 반환함
+ */
+function add(a, b) {
+    return a + b;
+}
 ```
 
 5. 엄격모드
@@ -203,8 +215,13 @@ console.log(`abc
     -   &&는 곱
     -   ||는 합
     -   !는 부정
+    -   !!는 true와 false를 반환하게 해주는 코드
     -   암기코드
 
+    ```js
+    Math.floor -> 버림 (내림)
+    ~~ -> Math.floor와 동등하게 쓰이는 연산자
+    ```
     ```js
     // 할당연산자 체이닝 (권하지 않습니다.)
     a = b = c = 2 + 2;
@@ -214,22 +231,23 @@ console.log(`abc
     for (let x = 0; x < 100; x++) {
         if (x % 3 == 0 && x % 5 == 0) {
             console.log(x);
-        }
+        } // 15배수 출력
     }
     ```
 
     ```js
     // 앞에 값이 널이냐를 확인하고 싶은 경우, 단락 회로 평가라고 부릅니다.
+    // ||는 true 값이 나올때까지 살펴봄.
     result1 = 10 || 100;
     result2 = 0 && 100;
     result3 = null || 100;
     result4 = null && 100;
 
     username = "hojun";
-    result5 = username || "유저 이름이 없습니다";
+    result5 = username || "유저 이름이 없습니다"; // hojun 출력
 
     username = undefined;
-    result5 = username || "유저 이름이 없습니다";
+    result5 = username || "유저 이름이 없습니다"; // 유저 이름이 없습니다 출력
     ```
 
 -   비교 연산자(>, >=, <, <=, ==, !=, ===, !==)
@@ -241,6 +259,10 @@ console.log(`abc
             console.log('01' == 1) // true
             ```
         - null과 undefined 비교하기
+            - 산술 연산자나 기타 비교 연산자를 사용하면 (==, === 제외) null과 undefined는 숫자형으로 반환
+            - null은 0
+            - undefined는 NaN
+
             - 동등 연산자(==)를 비교하면 true 반환
             - 일치 연산자(===)를 비교하면 false 반환
             ```js
@@ -248,10 +270,22 @@ console.log(`abc
             console.log(null === undefined); // false
             ```
         - 에지 케이스(edge case)
+            ```js
+            console.log( null > 0 );  // (1) false (null이 0으로 변환)
+            console.log( null == 0 ); // (2) false (null이 0으로 변환X)
+            console.log( null >= 0 ); // (3) true (null이 0으로 변환)
+            // >= 연산을 할 때에 null이 0으로 변환이 되어 위와 같은 일을 만듦
+
+            // undefined를 다른 값과 비교하면 안됨 (항상 false를 반환)
+            console.log( undefined > 0 ); // false (1) (undefined가 NaN으로 변환) (NaN 비교 연산자는 항상 false 반환 -> NaN == NaN -> false 출력)
+            console.log( undefined < 0 ); // false (2) (undefined가 NaN으로 변환)
+            console.log( undefined == 0 ); // false (3) (undefined는 null 이나 undefined와 같음, 그 외의 값은 false)
+            ```
 
 -   단항 산술 연산자(++x, x++, --x, x--)
--   nullish 병합 연산자(??)
+-   nullish 병합 연산자(??) (null, undefined만 판별)
 -   비트 연산자(AND - &, OR - |, XOR - ^, NOT - ~, 왼쪽 시프트 - <<, 오른쪽 시프트 - >>, 부호 없는 오르쪽 시프트 - >>>)
+
 
     ```js
     let result1;
@@ -262,6 +296,19 @@ console.log(`abc
 
     let result5 = null;
     let result6 = result5 ?? 100;
+
+    username = "hojun";
+    result5 = username ?? "유저 이름이 없습니다"; // hojun 출력
+
+    username = undefined;
+    result5 = username ?? "유저 이름이 없습니다"; // 유저 이름이 없습니다 출력
+    // ||은 첫 번째 truthy 값을 반환
+    // ??는 첫 번째 정의된 값을 반환
+
+    let x = 0;
+
+    console.log(x || 10); // ||은 0을 false로 반환하여 -> 10 출력
+    console.log(x ?? 10); // ??는 x라는 값(0)이 존재한다고 생각하여 -> 0 출력
     ```
 
 -   typeof 연산자
@@ -408,8 +455,24 @@ console.log(`abc
     Array.from({length: 100}, (v, i) => i + 1)
     ```
 
--   Object(객체)
+-   Object(객체) 
+    -   다양한 데이터를 담을 수 있다. 키 - 문자형, 값 - 모든 자료형
 
+    -   생성하는 방법
+    ```js
+    let data = new Object(); // '객체 생성자'
+    let data = {};  // '객체 리터럴' - 주로 사용
+
+    let human = {     
+        name: "lee",  
+        age: 20 
+    };
+    human.name;
+    human['name'];
+
+    // delete human.name; // 권하지 않습니다.
+    // human.name = null; // 권합니다.
+    ```
     -   형태 :
         ```js
         {
@@ -550,6 +613,29 @@ console.log(`abc
 -   else
 -   switch
     ```js
+    // 한 줄로 사용하는 경우도 종종 있습니다.
+    if (true) console.log('hello world');
+    ```
+    ```js
+    // if문 안에서 선언된 변수(var는 사용 안함, let, const)는 밖에서 읽을 수 없습니다.
+    if (true) {
+        let x = 10;
+        console.log(x);
+    }
+    // x를 읽을 수 없습니다. let, const는 블록 스코프를 가지기 때문
+    console.log(x);
+    ```
+    ```js
+    if (1) console.log('1');    // 1
+    if ('') console.log('공백없음');    // 
+    if (' ') console.log('공백');  // 공백 출력
+    if ('hello') console.log('hello'); // hello
+    if (NaN) console.log('NaN');
+    if (null) console.log('null');
+    if ([]) console.log('[]'); // 주의 []
+    if ({}) console.log('{}'); // 주의 {}
+    ```
+    ```js
     if (false) {
         console.log("hello 1");
     }
@@ -569,7 +655,7 @@ console.log(`abc
     } else if (false) {
         console.log("hello 2");
     } else if (true) {
-        console.log("hello 3");
+        console.log("hello 3"); // 종료
     } else if (true) {
         console.log("hello 4");
     } else {
@@ -577,7 +663,36 @@ console.log(`abc
     }
     ```
     ```js
+    // let result = condition ? value1 : value2;
     let result = true ? 1 : 100;
+    ```
+    - 문제 : 다음 if문을 3항 연산자로 만들어보세요.
+    ```js
+    // 문제 1
+    let money = 500;
+    if (money < 1300) {
+        console.log('버스를 탈 수 없습니다.');
+    } else {
+        console.log('버스를 탔습니다.');
+    }
+    // 3항 연산자
+    let money = 500;
+    money < 1300 ? console.log('버스를 탈 수 없습니다.') : console.log('버스를 탔습니다.');
+
+    // 문제 2
+    let money = 500;
+    if (money < 1300) {
+        money += 1000;
+    } else if (money < 2000) {
+        money += 500;
+    } else {
+        money += 100;
+    }
+
+    // 3항 연산자
+    let money = 500;
+    money < 1300 ? money += 1000 : (money < 2000 ? money += 500 : money += 100);
+    console.log(money);
     ```
 
 ## 반복문
@@ -625,6 +740,49 @@ while (x < 10) {
     console.log(x);
     x++;
 }
+
+let x = 0;
+while (x < 10) {
+    console.log(x);
+    x + 2;
+} 
+console.log('end');
+// 2 4 6 8 출력
+
+let x = 0;
+while (true) {
+    console.log(x);
+    x += 2;
+    if (x >= 10) {
+        break;
+    }
+} 
+
+while (true) {
+    value = prompt('명령을 입력하세요');
+    console.log(value);
+    if (value === 'break') {
+        break;
+    }
+}
+
+let value = ~~(Math.random()*100);
+console.log(value);
+while (true) {
+    input = prompt('명령을 입력하세요');
+    console.log(input);
+    if (value === parseInt(input)) {
+        console.log('GOOD!!');
+        break;
+    } else if (value > parseInt(input)) {
+        console.log('UP!!');
+    } else if (value < parseInt(input)) {
+        console.log('DOWN!!');
+    }
+}
+
+let i = 10;
+while (i) console.log(i--); // 0이면 탈출
 ```
 
 ```js
@@ -643,6 +801,11 @@ a.forEach((e) => console.log(e ** 2));
 ```
 
 ```js
+// 문법
+for (초깃값; 조건; 증감식) {
+    // ... 반복문 본문 ...
+}
+
 //예제
 for (let i = 0; i < 10; i++) {
     if (i == 5) {
@@ -650,29 +813,96 @@ for (let i = 0; i < 10; i++) {
     }
     console.log(i);
 }
+// 0 1 2 3 4
 ```
 
 ```js
 //예제
 for (let i = 0; i < 10; i++) {
-    if (i == 5) break;
+    if (i == 5) break; // 바로 위 반복문만 멈춤
     console.log(i);
 }
 ```
 
-```js
-//예제
-for (let i = 0; i < 10; i++) {
-    if (i == 5) break;
-    console.log(i);
-}
-```
 
 ```js
 //예제
 for (let i = 0; i < 10; i++) {
     if (i == 5) continue;
     console.log(i);
+}
+// 0 1 2 3 4 6 7 8 9
+// 5만 건너뛴다.
+
+// 여러가지 테스트 문법
+for (let i = 10; i > 0; i--) {
+    console.log(i);
+}
+// 10 9 8 7 6 5 4 3 2 1
+
+let k = 1;
+for (; k < 10; k++) {
+    console.log(k);
+}
+// ; -> 생략한 경우 위에서 선언해주기
+
+let k = 1;
+for (; k < 10;) {
+    console.log(k);
+    k += 2; // 증감식을 작성해줘야 한다.
+}
+
+// 무한반복입니다.
+for (;;) {
+    value = prompt('명령을 입력하세요');
+    console.log(value);
+    if(value === 'break') {
+        break;
+    }
+}
+for (let i = 2; i < 10; i++) {
+    for (let j = 1; j < 10; j++) {
+        if (i == 5) break; // 5단만 건너뜁니다.
+        console.log(`${i} X ${j} = ${i*j}`);
+  }
+}
+console.log('end');
+
+for (let i = 2; i < 10; i++) {
+    for (let j = 1; j < 10; j++) {
+        if (i == 5) break;
+        console.log(`${i} X ${j} = ${i * j}`);
+    }
+    if (i == 5) break; // 4단까지만 출력합니다.
+}
+console.log("end");
+
+// label
+outer: for (let i = 2; i < 10; i++) {
+
+     for (let j = 1; j < 10; j++) {
+        console.log(`${i} X ${j} = ${i*j}`);
+        if (i == 5) break outer;
+    }
+}
+console.log('end');
+```
+
+```js
+// switch 문을 사용하실 때에는 type확인을 하세요!!!
+
+switch (2) {
+    case 1:
+        console.log(100);
+        break;
+    case 2:
+        console.log(200);
+        break;
+    case 3:
+        console.log(300);
+        break;
+    default:
+        console.log("값이 없음.");
 }
 ```
 
@@ -682,8 +912,25 @@ for (let i = 0; i < 10; i++) {
 
 -   함수 표현식과 함수 선언식
     ```js
-    let 함수표현식 = function () {}; // 호이스팅 X
-    function 함수선언식() {} // 호이스팅 O
+    let 함수표현식 = function () {}; // 호이스팅 X (호이스팅 안되는 것처럼 작동한다.)
+    function 함수선언식() {} // 호이스팅 O - 어디에 위치하든 작동한다. 마치 맨 위에 선언되어 있는것처럼 자바스크립트가 조정
+
+    // 작동 O
+    sum(10, 20);
+    function sum(x,y) {
+        return x + y; 
+    }
+    // 작동 X
+    sum(10, 20);
+    let sum = function (x, y) {
+        return x + y;
+    };
+
+    // 작동 X
+    sum(10, 20);
+    let sum = (x, y) => {
+        return x + y;
+    };
     ```
 -   함수(파선아실)
 
@@ -713,7 +960,7 @@ for (let i = 0; i < 10; i++) {
         return x + y;
     }
 
-    add(3, 5);
+    add(3, 5); // 8
 
     function add(a = 100, b = 200) {
         console.log(a, b);
@@ -780,7 +1027,14 @@ for (let i = 0; i < 10; i++) {
     }
 
     // 함수표현식, 호이스팅 X
-    let 제곱 = (x) => x ** 2;
+    // 인자가 1개일 때에는 괄호 X
+    let 제곱 = x => x ** 2;
+
+    // 본문이 있는 경우 중괄호
+    let 제곱 = (x) => {
+        console.log(x);
+        return x ** 2;
+    };
 
     function f(a, b) {
         let z = 10;
@@ -818,6 +1072,20 @@ for (let i = 0; i < 10; i++) {
         return x + y;
     });
     ```
+
+-   return
+    ```js
+    function hello() {
+        console.log('hello');
+        console.log('hello');
+        console.log('hello');
+        return;
+        console.log('hello');
+        console.log('hello');
+    }
+    hello(); // 3번만 출력됨.
+    ```
+
 
 ## 클래스
 
